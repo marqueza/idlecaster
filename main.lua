@@ -5,7 +5,7 @@ require 'map'
 require 'engine'
 require 'item'
 local class = require 'lib.middleclass'
-local state = require "lib.hump.gamestate"
+local state = require "lib.gamestate"
 local poll = {} 
 local exec = {}
 local inventoryExamine = {}
