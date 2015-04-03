@@ -7,7 +7,7 @@ function Engine:initialize(map, player)
   self.player.x, self.player.y = map.tileWidth/2, 4
   self.npcs = {}
   self.items = {}
-  self.invMenu = nil
+  self.menus = {}
   self.console = Console:new()
 end
 
@@ -50,14 +50,32 @@ function Engine:getItem(x, y)
 end
 
 function Engine:spawnInventoryMenu()
-  --if not self.invMenu then return end
   local menuList = {}
     for i, item in ipairs(self.player.inv) do
       local offset = i-1
       local char = string.char(97+offset)
       menuList[i] = char.." "..item.name
     end
-    self.invMenu = Menu:new(0,0,menuList)
+    self.menus.invMenu = Menu:new(0,0,menuList)
+end
+
+function Engine:spawnStatMenu(x, y)
+  local ml, vl = {}, {}
+    for k, stat in pairs(self.player.stats) do
+      table.insert(ml,k)
+      table.insert(vl,stat)
+    end
+    self.menus.statMenu = Menu:new(x or 0, y or 0, ml, vl)
+    self:spawnSkillMenu(0, self.menus.statMenu:getBottom())
+end
+
+function Engine:spawnSkillMenu(x,y)
+  local ml, vl = {"skills"}, {""}
+    for k, skill in pairs(self.player.skills) do
+      table.insert(ml,k)
+      table.insert(vl,skill)
+    end
+    self.menus.skillMenu = Menu:new(x or 0, y or 0, ml, vl)
 end
 
 function Engine:update()
@@ -94,7 +112,7 @@ function Engine:draw()
     love.graphics.draw(self.map.tileset, self.map.quads[self.player.char], x, y)
     
     --active menus
-    if self.invMenu then
-      self.invMenu:draw()
-    end
+    if self.menus.invMenu then  self.menus.invMenu:draw() end
+    if self.menus.statMenu then  self.menus.statMenu:draw() end
+    if self.menus.skillMenu then  self.menus.skillMenu:draw() end
 end

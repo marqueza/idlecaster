@@ -5,8 +5,7 @@ class = require 'lib.middleclass'
 Creature = class('Creature')
 
 function Creature:initialize()
-  
-    self.level = 1
+
     self.x = 0
     self.y = 0
   
@@ -18,6 +17,17 @@ function Creature:initialize()
     self.life = 0
     self.mana = 0
     self.traits = {}
+    
+    self.stats = {
+        ["level"] = 1,
+
+        ["strength"] = 0,
+        ["grace"] = 0,
+        ["mind"] = 0,
+
+        ["life"] = 0,
+        ["mana"] = 0,
+    }
     
     --what skills, atrributes, traits, should all creatures 
     --most likely just skills
@@ -86,12 +96,16 @@ function Eulderna:initialize(char)
     self.char = char or 'p'
     
   --add stats, trained skills, etc
-    self.strength = self.strength + 10
-    self.grace = self.grace + 10
-    self.mind = self.mind + 10
-    
-    self.life = 8
-    self.mana = 8
+  self.stats = {
+        ["level"] = 1,
+
+        ["strength"] = 10,
+        ["grace"] = 10,
+        ["mind"] = 10,
+
+        ["life"] = 10,
+        ["mana"] = 10,
+    }
     
 end
 

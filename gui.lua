@@ -51,19 +51,15 @@ class: Menu
 Vertical text menu
 ]]--
 Menu = class('Menu', Rect) 
-function Menu:initialize(x1, y1, textList)
-    self.textList = textList or {"Item1", "Item2"}
-
+function Menu:initialize(x1, y1, textList, valueList)
+    self.textList = textList or {"Item1", "Item2"}  
+    self.valueList = valueList or textList
+    self.title = tile or ""
     self.x1 = x1 or 0
     self.y1 = y1 or 0
     self.y2 = self.y1 + fontsize
     self.x2 = self.x1 + (100)
 
-    --a list of vertices 
-    --{x1, y1, 
-    --x1, y2, 
-    --x2, y2, 
-    --x2, y1}
     self.vertices = {
                     self.x1, self.y1, 
                     self.x1, self.y2, 
@@ -89,24 +85,46 @@ function Menu:initialize(x1, y1, textList)
     
     end
 end
+function Menu:getBottom()
+    return self.panelList[#self.panelList].y2
+end
     --self.draw, lets draw some panels
 function Menu:draw() 
         love.graphics.setColor(000, 255, 300, 255)
         love.graphics.polygon('fill', self.vertices)
     for i, panel in ipairs(self.panelList) do 
+      
         if (panel:isInside(love.mouse.getX(), love.mouse.getY())) then
             if love.mouse.isDown("l") then
-                love.graphics.setColor(0, 0, 200, 255)
+                love.graphics.setColor(0, 0, 200, 255) --pressed down color
             else 
-                love.graphics.setColor(200, 0, 0, 255)
+              if i ==1 then
+                love.graphics.setColor(25, 0, 0, 255) --1st,darker hover
+              else
+                love.graphics.setColor(150, 0, 0, 255) --hover
+              end
             end
-        else
-            love.graphics.setColor(50, 0, 0, 255)
+          else
+            
+          --non hover, or pressed
+          if i ==1 then
+            love.graphics.setColor(25, 0, 0, 255) --1st, darker, normal color
+          else
+            love.graphics.setColor(50, 0, 0, 255) -- normal color
+          end
+          
+          
         end
-        --panel:draw()
         love.graphics.polygon('fill', panel.vertices)
         love.graphics.setColor(255, 255, 255, 255)
-        love.graphics.printf(self.textList[i], panel.x1, panel.y1 , self.width, 'center')
+        
+        --split the sprint text and amount
+
+        love.graphics.printf(self.textList[i], panel.x1+10, panel.y1+2, self.width, 'left')
+        
+        if self.valueList[i] then 
+          love.graphics.printf(self.valueList[i], panel.x1-10, panel.y1+2, self.width, 'right') 
+          end
     end
 end
 
@@ -120,7 +138,7 @@ function Menu:activatePanel()
          --default action is print text related to each panel
          mainConsole:print(self.textList[i])
          
-        love.graphics.print("Text", 600, 300)
+        love.graphics.printf("Text", 600, 300,100,right)
          --probably flush out new
     end
   end

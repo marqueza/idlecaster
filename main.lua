@@ -9,7 +9,8 @@ local state = require "lib.gamestate"
 local poll = {} 
 local exec = {}
 local inventoryExamine = {}
-local inventoryDrop = {} 
+local inventoryDrop = {}
+local statMenu = {} 
 
 function love.load()
   love.keyboard.setKeyRepeat( true )
@@ -41,10 +42,10 @@ function poll:update()
   
 end
 
---default state/screen keypress
-function poll:keypressed(key, isRepeat)
 
-    local dx, dy = 0,0
+function poll:keypressed(key)
+    
+      local dx, dy = 0,0
       if key=='kp1' then dx, dy =-1, 1 endTurn()
       elseif key=='kp2' then dx, dy = 0, 1 endTurn()
       elseif key=='kp3' then dx, dy = 1, 1 endTurn()
@@ -56,6 +57,11 @@ function poll:keypressed(key, isRepeat)
       elseif key=='kp9' then  dx, dy = 1,-1 endTurn()
     end
     e:displace(e.player, dx, dy)
+end
+--poll, "default" keycombo inputs
+function poll:textinput(key, isRepeat)
+
+  
     if key == 'a' then
       e:spawnCreature(Eulderna:new('@'), e.map.tileWidth/2, 4)
       endTurn()
@@ -116,9 +122,6 @@ function poll:keypressed(key, isRepeat)
       end
     end
     
-    if key == 'c' then
-      e.console:print("Chat.")
-    end
     
     if key == 'i' then
       if (e.player.inv[1]) then
@@ -134,12 +137,23 @@ function poll:keypressed(key, isRepeat)
         state.switch(inventoryDrop)
       end
     end
+    
+    if key == 'C' then
+        e:spawnStatMenu()
+        state.switch(statMenu)
+    end
+    
+     if key == 'm' then
+        e:spawnSkillMenu()
+        state.switch(statMenu)
+    end
  
 end
 
 --pressing a letter should print the description of the item
 function inventoryExamine:keypressed()
-  e.invMenu = nil
+  e.menus.invMenu = nil
+  
   --do not end turn
   state.switch(poll)
 end
@@ -147,7 +161,7 @@ end
 ---use the first char to help remove item using ascii trickery and indexing
 function inventoryDrop:keypressed(key)
   
-  for i, selection in ipairs(e.invMenu.textList) do
+  for i, selection in ipairs(e.menus.invMenu.textList) do
     --the first letter of the menu time will be used
     local letter = string.sub(selection, 1, 1)
     --in this case, "i" is the index of the inventory that is of interest
@@ -160,16 +174,22 @@ function inventoryDrop:keypressed(key)
       --remove from inventory
       table.remove(e.player.inv, i)
       --now close the inv and end turn 
-      e.invMenu = nil
+      e.menus.invMenu = nil
       state.switch(exec)
       return
     end
   end
   ---other keys should exit and return back to poll state
-  e.invMenu = nil
+  e.menus.invMenu = nil
   state.switch(poll)
 end
 
+function statMenu:keypressed(key)
+  e.menus.statMenu = nil
+  e.menus.skillMenu = nil
+  state.switch(poll)
+end
+  
 function endTurn () 
 
   state.switch(exec)
