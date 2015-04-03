@@ -1,20 +1,21 @@
-local class = require 'lib.middleclass'
+
 require 'gui'
 require 'creature'
 require 'map'
 require 'engine'
-state = require "lib.hump.gamestate"
+require 'item'
+local class = require 'lib.middleclass'
+local state = require "lib.hump.gamestate"
 local poll = {} 
 local exec = {}
 
 function love.load()
   --if arg[#arg] == "-debug" then require("mobdebug").start() end
-  e = Engine:new(loadMap('maps/base.lua'), Eulderna:new())
+  e = Engine:new(loadMap('maps/base.lua'), Eulderna:new('@'))
   love.graphics.setBackgroundColor(0,0,0)
   state.registerEvents()
   state.switch(poll)
 end
-
 
 function love.draw()
   
@@ -37,13 +38,9 @@ function poll:update()
   
 end
 
-
 --default state/screen keypress
 function poll:keypressed(key)
-  --This is the begging of a new "turn", so get ride of all the old messages
 
-
-  
     local dx, dy = 0,0
       if key=='kp1' then dx, dy =-1, 1 endTurn()
       elseif key=='kp2' then dx, dy = 0, 1 endTurn()
@@ -57,21 +54,39 @@ function poll:keypressed(key)
     end
     e:displace(e.player, dx, dy)
     if key == 'a' then
-      e:spawn(Eulderna:new(), e.map.tileWidth/2, 4)
+      e:spawnCreature(Eulderna:new('@'), e.map.tileWidth/2, 4)
       endTurn()
       --first message of the next turn
       e.console:print("You clone yourself.")
+      
+    end
+     if key == 'r' then
+      e:spawnCreature(Eulderna:new('p'), e.map.tileWidth/2, 4)
+      endTurn()
+      --first message of the next turn
+      e.console:print("You recuit a servant.")
       
     end
     if key == 'w' then
       endTurn()
       --first message of the next turn
       e.console:print("You cast word of genocide.")
+      --removes all npcs
       e.npcs = {}
     end
+    
+    if key == 'd' then
+      endTurn()
+      --first message of the next turn
+      e.console:print("You create a corpse.")
+      e:spawnItem(Item:new("Corpse", '%'), e.player.x, e.player.y)
+    end
+    
     if key == 'c' then
       e.console:print("Chat.")
     end
+    
+    
  
 end
 

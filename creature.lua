@@ -1,5 +1,7 @@
 class = require 'lib.middleclass'
 
+
+
 Creature = class('Creature')
 
 function Creature:initialize()
@@ -36,7 +38,6 @@ function Creature:addTraits(newTraits)
       table.insert(self.traits, v) 
   end
 end
-
 
 function Creature:move(dx, dy, map) 
   --and not newMap:isSolid(self.x+dx, self.y+dy)
@@ -79,10 +80,10 @@ function Sapien:initialize()
 end
 
 Eulderna = class('Eulderna', Sapien)
-function Eulderna:initialize()
+function Eulderna:initialize(char)
     Creature.initialize(self, 1)
     
-    self.char = '@'
+    self.char = char or 'p'
     
   --add stats, trained skills, etc
     self.strength = self.strength + 10
