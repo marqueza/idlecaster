@@ -52,8 +52,8 @@ Vertical text menu
 ]]--
 Menu = class('Menu', Rect) 
 function Menu:initialize(x1, y1, textList, valueList)
-    self.textList = textList or {"Item1", "Item2"}  
-    self.valueList = valueList or textList
+    self.textList = textList 
+    self.valueList = valueList
     self.title = tile or ""
     self.x1 = x1 or 0
     self.y1 = y1 or 0
@@ -120,11 +120,12 @@ function Menu:draw()
         
         --split the sprint text and amount
 
-        love.graphics.printf(self.textList[i], panel.x1+10, panel.y1+2, self.width, 'left')
-        
-        if self.valueList[i] then 
-          love.graphics.printf(self.valueList[i], panel.x1-10, panel.y1+2, self.width, 'right') 
-          end
+        if self.valueList and self.valueList[i] then 
+            love.graphics.printf(self.textList[i], panel.x1+10, panel.y1+2, self.width, 'left')
+            love.graphics.printf(self.valueList[i], panel.x1-10, panel.y1+2, self.width, 'right') 
+        else
+          love.graphics.printf(self.textList[i], panel.x1, panel.y1+2, self.width, 'center') 
+        end
     end
 end
 
