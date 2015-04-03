@@ -8,6 +8,8 @@ local class = require 'lib.middleclass'
 local state = require "lib.hump.gamestate"
 local poll = {} 
 local exec = {}
+local inventoryExamine = {}
+local inventoryDrop = {} 
 
 function love.load()
   --if arg[#arg] == "-debug" then require("mobdebug").start() end
@@ -57,16 +59,18 @@ function poll:keypressed(key)
       e:spawnCreature(Eulderna:new('@'), e.map.tileWidth/2, 4)
       endTurn()
       --first message of the next turn
-      e.console:print("You clone yourself.")
-      
+      e.console:print("You clone yourself.")  
     end
+    
+    
      if key == 'r' then
       e:spawnCreature(Eulderna:new('p'), e.map.tileWidth/2, 4)
       endTurn()
       --first message of the next turn
       e.console:print("You recuit a servant.")
-      
     end
+    
+    
     if key == 'w' then
       endTurn()
       --first message of the next turn
@@ -75,19 +79,94 @@ function poll:keypressed(key)
       e.npcs = {}
     end
     
-    if key == 'd' then
+    
+    if key == 'q' then
       endTurn()
       --first message of the next turn
       e.console:print("You create a corpse.")
-      e:spawnItem(Item:new("Corpse", '%'), e.player.x, e.player.y)
+      e:spawnItem(Item:new("corpse", '%'), e.player.x, e.player.y)
+    end
+    
+    --pick up a item
+    if key == 'g' then
+      
+      --search if there are items in this location
+      local item = e:getItem(e.player.x, e.player.y)
+      
+      if (item ~= nil) then
+        e.console:print("You pick up a " ..item.name)
+        --transfer the item from floor to inventory
+        table.insert(e.player.inv, item) 
+        
+      end
+      
+    end
+    
+    --make a skelton
+    if key == 's' then
+      endTurn()
+      
+      --search if there are items in this location
+      local item = e:getItem(e.player.x, e.player.y)
+      
+      if (item ~= nil and item.name == "corpse") then
+        e.console:print("You pick animate a skelton")
+        e:spawnCreature(Eulderna:new('s'), item.x, item.y)
+      end
     end
     
     if key == 'c' then
       e.console:print("Chat.")
     end
     
+    if key == 'i' then
+      if (e.player.inv[1]) then
+      e:spawnInventoryMenu()
+      state.switch(inventoryExamine)
+      end
+    end
     
+    if key == 'd' then
+      if (e.player.inv[1]) then
+        e.console:print("Drop which item?")
+        e:spawnInventoryMenu()
+        state.switch(inventoryDrop)
+      end
+    end
  
+end
+
+--pressing a letter should print the description of the item
+function inventoryExamine:keypressed()
+  e.invMenu = nil
+  --do not end turn
+  state.switch(poll)
+end
+
+---use the first char to help remove item using ascii trickery and indexing
+function inventoryDrop:keypressed(key)
+  
+  for i, selection in ipairs(e.invMenu.textList) do
+    --the first letter of the menu time will be used
+    local letter = string.sub(selection, 1, 1)
+    --in this case, "i" is the index of the inventory that is of interest
+    if key == letter then
+       e.console:print("Dropping!")
+      --place on floor
+      local object = e.player.inv[i]
+      object.x, object.y = e.player.x, e.player.y
+      table.insert(e.items, object)
+      --remove from inventory
+      table.remove(e.player.inv, i)
+      --now close the inv and end turn 
+      e.invMenu = nil
+      state.switch(exec)
+      return
+    end
+  end
+  ---other keys should exit and return back to poll state
+  e.invMenu = nil
+  state.switch(poll)
 end
 
 function endTurn () 

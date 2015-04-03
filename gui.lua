@@ -160,7 +160,7 @@ function Console:flushRecentBuffer()
       self.buffer = self.buffer .. self.recentBuffer 
    
       --empty recentbuffer
-      self.recentBuffer =  ""
+     -- self.recentBuffer =  ""
     end
  end
 
@@ -170,12 +170,12 @@ function Console:draw()
   love.graphics.setColor(000, 000, 000, 255)
   love.graphics.polygon('fill', self.vertices)
   
-  --old messages have a faded color
+ --[[ --old messages have a faded color
   love.graphics.setColor(0, 255, 255, 255)
   s = "\n" .. self.buffer  
   love.graphics.printf(s, self.x1, self.y1 , self.width, 'left')
   love.graphics.setColor(255, 255, 255, 255)
-  
+  ]]
   --last turn's message has an accented color
   love.graphics.setColor(255, 255, 255, 255)
   --love.graphics.print(#self.recentBuffer, love.graphics.getWidth(), 0)
