@@ -12,6 +12,7 @@ local inventoryExamine = {}
 local inventoryDrop = {} 
 
 function love.load()
+  love.keyboard.setKeyRepeat( true )
   --if arg[#arg] == "-debug" then require("mobdebug").start() end
   e = Engine:new(loadMap('maps/base.lua'), Eulderna:new('@'))
   love.graphics.setBackgroundColor(0,0,0)
@@ -41,7 +42,7 @@ function poll:update()
 end
 
 --default state/screen keypress
-function poll:keypressed(key)
+function poll:keypressed(key, isRepeat)
 
     local dx, dy = 0,0
       if key=='kp1' then dx, dy =-1, 1 endTurn()
@@ -59,7 +60,7 @@ function poll:keypressed(key)
       e:spawnCreature(Eulderna:new('@'), e.map.tileWidth/2, 4)
       endTurn()
       --first message of the next turn
-      e.console:print("You clone yourself.")  
+      e.console:printFlush("You clone yourself.")  
     end
     
     

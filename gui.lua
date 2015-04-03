@@ -149,7 +149,12 @@ end
 
 function Console:print(message)
   --concat, unless the last string is over threas
-  self.buffer[#self.buffer] = self.buffer[#self.buffer] .. " " ..message
+ if string.len(self.buffer[#self.buffer]) < 100 then
+   self.buffer[#self.buffer] = self.buffer[#self.buffer] .. " " ..message
+  else
+    table.insert(self.buffer, message)
+  end
+ 
  -- table.insert(self.buffer, message)
 end
 
