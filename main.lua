@@ -67,14 +67,14 @@ function poll:keypressed(key)
       e:spawnCreature(Eulderna:new('p'), e.map.tileWidth/2, 4)
       endTurn()
       --first message of the next turn
-      e.console:print("You recuit a servant.")
+      e.console:printFlush("You recuit a servant.")
     end
     
     
     if key == 'w' then
       endTurn()
       --first message of the next turn
-      e.console:print("You cast word of genocide.")
+      e.console:printFlush("You cast word of genocide.")
       --removes all npcs
       e.npcs = {}
     end
@@ -83,7 +83,7 @@ function poll:keypressed(key)
     if key == 'q' then
       endTurn()
       --first message of the next turn
-      e.console:print("You create a corpse.")
+      e.console:printFlush("You create a corpse.")
       e:spawnItem(Item:new("corpse", '%'), e.player.x, e.player.y)
     end
     
@@ -94,7 +94,7 @@ function poll:keypressed(key)
       local item = e:getItem(e.player.x, e.player.y)
       
       if (item ~= nil) then
-        e.console:print("You pick up a " ..item.name)
+        e.console:printFlush("You pick up a " ..item.name)
         --transfer the item from floor to inventory
         table.insert(e.player.inv, item) 
         
@@ -110,7 +110,7 @@ function poll:keypressed(key)
       local item = e:getItem(e.player.x, e.player.y)
       
       if (item ~= nil and item.name == "corpse") then
-        e.console:print("You pick animate a skelton")
+        e.console:printFlush("You pick animate a skelton")
         e:spawnCreature(Eulderna:new('s'), item.x, item.y)
       end
     end
@@ -151,7 +151,7 @@ function inventoryDrop:keypressed(key)
     local letter = string.sub(selection, 1, 1)
     --in this case, "i" is the index of the inventory that is of interest
     if key == letter then
-       e.console:print("Dropping!")
+       e.console:printFlush("Dropping!")
       --place on floor
       local object = e.player.inv[i]
       object.x, object.y = e.player.x, e.player.y
@@ -170,8 +170,7 @@ function inventoryDrop:keypressed(key)
 end
 
 function endTurn () 
-  
-  e.console:flushRecentBuffer()
+
   state.switch(exec)
   
 end

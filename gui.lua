@@ -144,24 +144,18 @@ function Console:initialize()
     self.height = self.y2 - self.y1 
     self.width =  self.x2 - self.x1
     
-    self.recentBuffer = ""
-    self.buffer = ""
-    self.stale = false
+    self.buffer = {""}
 end
 
 function Console:print(message)
-  --place new content in recentBuffer
-  self.recentBuffer =  self.recentBuffer .. message .. " "
+  --concat, unless the last string is over threas
+  self.buffer[#self.buffer] = self.buffer[#self.buffer] .. " " ..message
+ -- table.insert(self.buffer, message)
 end
 
-function Console:flushRecentBuffer()
-      if self.stale then 
-      --move old content into the main buffer
-      self.buffer = self.buffer .. self.recentBuffer 
-   
-      --empty recentbuffer
-     -- self.recentBuffer =  ""
-    end
+function Console:printFlush(message)
+      --"new line" for buffer
+      table.insert(self.buffer, message)
  end
 
 function Console:draw()
@@ -170,16 +164,16 @@ function Console:draw()
   love.graphics.setColor(000, 000, 000, 255)
   love.graphics.polygon('fill', self.vertices)
   
- --[[ --old messages have a faded color
-  love.graphics.setColor(0, 255, 255, 255)
-  s = "\n" .. self.buffer  
-  love.graphics.printf(s, self.x1, self.y1 , self.width, 'left')
-  love.graphics.setColor(255, 255, 255, 255)
-  ]]
-  --last turn's message has an accented color
-  love.graphics.setColor(255, 255, 255, 255)
-  --love.graphics.print(#self.recentBuffer, love.graphics.getWidth(), 0)
-  local s =self.recentBuffer
-  love.graphics.printf(s, self.x1, self.y1 , self.width, 'left')
+  --spew the messages on the box
+ 
+
+ for i, message in ipairs(self.buffer) do
+   if i >= 10 then
+     break
+    end
+   offset = i -1
+   love.graphics.setColor(255, 255, 255, 255-offset*20)
+   love.graphics.printf(self.buffer[#self.buffer-offset], self.x1, self.y2-offset*fontsize, self.width, 'left')
+  end
   
 end
